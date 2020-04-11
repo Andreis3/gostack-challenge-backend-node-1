@@ -125,4 +125,23 @@ describe("Projects", () => {
       .delete(`/repositories/123`)
       .expect(404);
   });
+
+  it("should be able to list repository by id", async () => {
+    const repository = await request(app)
+      .post("/repositories")
+      .send({
+        url: "https://github.com/Rocketseat/umbriel",
+        title: "Umbriel",
+        techs: ["Node", "Express", "TypeScript"]
+      });
+
+    const response = await request(app)
+      .get(`/repositories/${repository.body.id}`)
+      .expect(200)
+
+    expect(isUuid(response.body.id)).toBe(true);
+    expect(response.body.id).toEqual(repository.body.id);
+
+    expect(response.body).toMatchObject(repository.body);
+  });
 });
